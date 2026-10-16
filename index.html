@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayo Menyimak Cerita! - Media Pembelajaran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            blue: '#4DA8DA',
+                            green: '#88D49E',
+                            yellow: '#FFD166',
+                            white: '#FFFFFF',
+                            text: '#2B2D42'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            color: #2B2D42;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .btn-bounce {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-bounce:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .btn-bounce:active {
+            transform: translateY(1px);
+        }
+        .hidden-screen {
+            display: none !important;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #4DA8DA; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82a6; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col font-sans">
+
+    <div id="screen-welcome" class="flex-1 flex items-center justify-center p-4 h-full overflow-y-auto">
+        <div class="glass-panel max-w-4xl w-full p-8 grid md:grid-cols-2 gap-8 items-center">
+            <div class="text-center md:text-left space-y-6">
+                <div class="inline-block bg-brand-yellow px-4 py-1 rounded-full text-sm font-bold text-brand-text mb-2 shadow-sm">
+                    Bahasa Indonesia Kelas V
+                </div>
+                <h1 class="text-4xl md:text-5xl font-bold text-brand-blue leading-tight">
+                    AYO MENYIMAK <br>CERITA!
+                </h1>
+                <p class="text-xl text-gray-600">
+                    Mengenal Teks Narasi Fiksi dan Nonfiksi melalui Audio
+                </p>
+                <div class="flex justify-center md:justify-start space-x-4 pt-4">
+                    <i class="fas fa-book-open text-3xl text-brand-green"></i>
+                    <i class="fas fa-headphones text-3xl text-brand-blue"></i>
+                    <i class="fas fa-child text-3xl text-brand-yellow"></i>
+                    <i class="fas fa-microphone text-3xl text-red-400"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-inner border border-gray-100">
+                <h2 class="text-2xl font-bold mb-4 text-center">Isi Identitasmu</h2>
+                <form id="form-login" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold mb-1">Nama Lengkap</label>
+                        <input type="text" id="input-nama" required class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-brand-blue focus:outline-none transition" placeholder="Masukkan namamu...">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold mb-1">Kelas</label>
+                            <select id="input-kelas" class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-brand-blue focus:outline-none bg-white">
+                                <option value="V">V</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold mb-1">No. Absen</label>
+                            <input type="number" id="input-absen" required min="1" max="50" class="w-full px-4 py-2 rounded-xl border-2 border-gray-200 focus:border-brand-blue focus:outline-none" placeholder="1-50">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-brand-green text-white font-bold text-lg py-3 rounded-xl btn-bounce mt-4 shadow-md">
+                        <i class="fas fa-play mr-2"></i> Mulai Belajar
+                    </button>
+                </form>
+                
+                <div class="mt-6 flex flex-col space-y-2">
+                    <button onclick="showScreen('screen-guide-main')" class="text-gray-500 text-sm hover:text-brand-blue transition">
+                        <i class="fas fa-question-circle mr-1"></i> Panduan Penggunaan
+                    </button>
+                    <button onclick="promptTeacherLogin()" class="text-gray-400 text-xs hover:text-brand-text transition mt-2">
+                        <i class="fas fa-chalkboard-teacher mr-1"></i> Masuk sebagai Guru
+                    </button>
+                </div>
+            </div>
+            
+            <div class="col-span-1 md:col-span-2 text-center text-xs text-gray-400 mt-4">
+                Dikembangkan oleh: Muh. Takbiratul Jahri, S.Pd
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-student" class="hidden-screen h-full flex flex-col md:flex-row bg-gray-50">
+        <nav class="bg-white w-full md:w-64 flex-shrink-0 shadow-lg z-10 flex flex-col h-auto md:h-full">
+            <div class="p-4 bg-brand-blue text-white flex items-center justify-between md:justify-center">
+                <div class="font-bold text-lg flex items-center">
+                    <i class="fas fa-headphones-alt mr-2 text-2xl"></i>
+                    <span class="hidden md:inline">Ayo Menyimak!</span>
+                </div>
+                <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="mobile-menu" class="hidden md:flex flex-col flex-1 overflow-y-auto p-2 space-y-1">
+                <div class="p-2 mb-2 bg-blue-50 rounded-lg text-sm text-center border border-blue-100">
+                    Hai, <span id="display-student-name" class="font-bold text-brand-blue">Siswa</span>!<br>
+                    <span class="text-xs text-gray-500">Kelas <span id="display-student-class">V</span></span>
+                </div>
+                
+                <button onclick="navStudent('home')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-home">
+                    <i class="fas fa-home w-6 text-brand-blue"></i> Beranda
+                </button>
+                <button onclick="navStudent('tujuan')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-tujuan">
+                    <i class="fas fa-bullseye w-6 text-brand-yellow"></i> Tujuan Belajar
+                </button>
+                <button onclick="navStudent('materi')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-materi">
+                    <i class="fas fa-book-reader w-6 text-brand-green"></i> Materi Interaktif
+                </button>
+                <button onclick="navStudent('audio')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-audio">
+                    <i class="fas fa-volume-up w-6 text-purple-500"></i> Menyimak Audio
+                </button>
+                <button onclick="navStudent('game')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-game">
+                    <i class="fas fa-gamepad w-6 text-pink-500"></i> Game Seru
+                </button>
+                <button onclick="navStudent('latihan')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-latihan">
+                    <i class="fas fa-pencil-alt w-6 text-orange-500"></i> Latihan Soal
+                </button>
+                <button onclick="navStudent('evaluasi')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-evaluasi">
+                    <i class="fas fa-clipboard-check w-6 text-red-500"></i> Evaluasi Akhir
+                </button>
+                <button onclick="navStudent('hasil')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-gray-100 font-semibold text-gray-700 transition flex items-center" id="nav-hasil">
+                    <i class="fas fa-star w-6 text-yellow-400"></i> Hasil Belajarku
+                </button>
+            </div>
+            
+            <div class="p-4 hidden md:block">
+                <button onclick="logout()" class="w-full py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition font-bold text-sm">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Keluar
+                </button>
+            </div>
+        </nav>
+
+        <main class="flex-1 overflow-y-auto relative p-4 md:p-8 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPgo8cmVjdCB3aWR0aD0iOCIgaGVpZ2h0PSI4IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxwYXRoIGQ9Ik0wIDBMOCA4Wk04IDBMMCA4WiIgc3Ryb2tlPSIjZjBmMGZkIiBzdHJva2Utd2lkdGg9IjEiPjwvcGF0aD4KPC9zdmc+')]">
+            
+            <!-- SECTION: BERANDA -->
+            <div id="sec-home" class="content-sec max-w-4xl mx-auto space-y-6">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 text-center">
+                    <img src="https://placehold.co/400x200/4DA8DA/white?text=Selamat+Datang!" alt="Welcome Banner" class="w-full rounded-2xl mb-6 object-cover h-48">
+                    <h2 class="text-3xl font-bold text-brand-blue mb-2">Selamat Belajar, <span class="student-name-fill">Siswa</span>!</h2>
+                    <p class="text-gray-600 mb-6">Mari kita mulai petualangan seru mengenal teks narasi. Ikuti langkah-langkah di menu samping ya!</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                            <i class="fas fa-book-reader text-3xl text-brand-blue mb-2"></i>
+                            <h3 class="font-bold">1. Baca Materi</h3>
+                            <p class="text-xs text-gray-500">Pahami konsep dasar fiksi dan nonfiksi.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100">
+                            <i class="fas fa-headphones text-3xl text-brand-green mb-2"></i>
+                            <h3 class="font-bold">2. Simak Cerita</h3>
+                            <p class="text-xs text-gray-500">Dengarkan audio cerita dengan seksama.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
+                            <i class="fas fa-star text-3xl text-brand-yellow mb-2"></i>
+                            <h3 class="font-bold">3. Kumpulkan Poin</h3>
+                            <p class="text-xs text-gray-500">Kerjakan kuis dan evaluasi untuk mendapat nilai.</p>
+                        </div>
+                    </div>
+                    <button onclick="navStudent('tujuan')" class="mt-8 bg-brand-blue text-white px-8 py-3 rounded-full font-bold text-lg btn-bounce shadow-md">
+                        Mulai Petualangan <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION: TUJUAN -->
+            <div id="sec-tujuan" class="content-sec hidden-screen max-w-4xl mx-auto">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                    <h2 class="text-3xl font-bold text-brand-yellow mb-6 flex items-center">
+                        <i class="fas fa-bullseye mr-3"></i> Tujuan Pembelajaran
+                    </h2>
+                    <div class="bg-yellow-50 p-6 rounded-2xl text-lg space-y-4">
+                        <p class="font-semibold text-gray-700 mb-2">Setelah belajar melalui aplikasi ini, kamu akan bisa:</p>
+                        <ul class="space-y-3">
+                            <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Menjelaskan apa itu teks narasi.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Mengetahui ciri-ciri cerita fiksi (rekaan) dan nonfiksi (nyata).</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Mengidentifikasi tokoh, latar, dan peristiwa dari cerita yang kamu dengar.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i> Membedakan mana cerita fiksi dan nonfiksi dengan tepat.</li>
+                        </ul>
+                    </div>
+                    <div class="mt-8 text-right">
+                        <button onclick="navStudent('materi')" class="bg-brand-green text-white px-6 py-2 rounded-full font-bold btn-bounce shadow">
+                            Lanjut ke Materi <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: MATERI -->
+            <div id="sec-materi" class="content-sec hidden-screen max-w-4xl mx-auto space-y-6">
+                <div class="bg-white p-8 rounded-3xl shadow-sm border-t-8 border-brand-blue">
+                    <h2 class="text-2xl font-bold mb-4">1. Apa itu Teks Narasi?</h2>
+                    <p class="text-lg mb-4">Teks narasi adalah cerita tentang rangkaian peristiwa yang terjadi secara berurutan. Peristiwa tersebut dialami oleh <strong>tokoh</strong> pada <strong>waktu</strong> dan <strong>tempat</strong> tertentu.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-t-8 border-purple-400">
+                        <h3 class="text-xl font-bold mb-3 text-purple-600"><i class="fas fa-dragon mr-2"></i> Teks Narasi FIKSI</h3>
+                        <p class="mb-4">Cerita fiksi dibuat berdasarkan <strong>imajinasi</strong> atau karangan penulisnya. Ceritanya tidak benar-benar terjadi di dunia nyata.</p>
+                        <div class="bg-purple-50 p-3 rounded-xl text-sm">
+                            <strong>Contoh:</strong> Dongeng, fabel (hewan bisa bicara), cerita sihir, dan legenda.
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-t-8 border-orange-400">
+                        <h3 class="text-xl font-bold mb-3 text-orange-600"><i class="fas fa-camera mr-2"></i> Teks Narasi NONFIKSI</h3>
+                        <p class="mb-4">Cerita nonfiksi ditulis berdasarkan <strong>fakta</strong> atau kejadian nyata. Meskipun ditulis seperti bercerita, isinya adalah kebenaran.</p>
+                        <div class="bg-orange-50 p-3 rounded-xl text-sm">
+                            <strong>Contoh:</strong> Pengalaman liburan, buku harian, biografi pahlawan, atau catatan perjalanan.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl shadow-sm overflow-hidden">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Tabel Perbedaan</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="p-3 border-b-2">Ciri-ciri</th>
+                                    <th class="p-3 border-b-2 text-purple-600">Fiksi (Khayalan)</th>
+                                    <th class="p-3 border-b-2 text-orange-600">Nonfiksi (Nyata)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b">
+                                    <td class="p-3 font-semibold">Sumber Cerita</td>
+                                    <td class="p-3">Imajinasi penulis</td>
+                                    <td class="p-3">Kejadian nyata/fakta</td>
+                                </tr>
+                                <tr class="border-b bg-gray-50">
+                                    <td class="p-3 font-semibold">Tokoh</td>
+                                    <td class="p-3">Bisa tidak nyata (misal: hewan bicara, peri)</td>
+                                    <td class="p-3">Manusia atau makhluk nyata yang benar-benar ada</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="p-3 font-semibold">Tujuan</td>
+                                    <td class="p-3">Menghibur pembaca</td>
+                                    <td class="p-3">Memberi informasi & pengalaman nyata</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-8 text-right">
+                        <button onclick="navStudent('audio')" class="bg-purple-500 text-white px-6 py-2 rounded-full font-bold btn-bounce shadow">
+                            Ayo Dengar Cerita! <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: AUDIO -->
+            <div id="sec-audio" class="content-sec hidden-screen max-w-4xl mx-auto space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-brand-blue">Menyimak Audio Cerita</h2>
+                        <p class="text-sm text-gray-500">Pilih cerita di bawah ini, dengarkan, dan pahami isinya!</p>
+                    </div>
+                    <i class="fas fa-headphones-alt text-4xl text-brand-blue opacity-50"></i>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4" id="audio-list-container"></div>
+
+                <div id="audio-player-area" class="bg-white p-6 rounded-3xl shadow-md border-2 border-brand-blue hidden mt-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 id="ap-title" class="text-xl font-bold text-gray-800">Judul Cerita</h3>
+                        <span id="ap-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-gray-200">Kategori</span>
+                    </div>
+                    
+                    <div class="flex justify-center space-x-4 mb-6">
+                        <button onclick="audioCtrl('play')" class="w-14 h-14 bg-brand-green text-white rounded-full flex items-center justify-center text-xl btn-bounce hover:bg-green-500 shadow-md" title="Putar">
+                            <i class="fas fa-play ml-1"></i>
+                        </button>
+                        <button onclick="audioCtrl('pause')" class="w-14 h-14 bg-yellow-400 text-white rounded-full flex items-center justify-center text-xl btn-bounce hover:bg-yellow-500 shadow-md" title="Jeda">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        <button onclick="audioCtrl('stop')" class="w-14 h-14 bg-red-400 text-white rounded-full flex items-center justify-center text-xl btn-bounce hover:bg-red-500 shadow-md" title="Berhenti">
+                            <i class="fas fa-stop"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between text-xs text-gray-500 mb-4">
+                        <span>Kecepatan:</span>
+                        <input type="range" id="ap-speed" min="0.5" max="1.5" step="0.1" value="1" class="mx-2 flex-1 accent-brand-blue">
+                        <span id="ap-speed-val">1x</span>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button onclick="document.getElementById('ap-text-content').classList.toggle('hidden')" class="text-brand-blue font-semibold text-sm hover:underline">
+                            <i class="fas fa-file-alt mr-1"></i> Tampilkan / Sembunyikan Teks
+                        </button>
+                        <button onclick="markAudioDone()" class="ml-4 text-green-600 font-semibold text-sm hover:underline">
+                            <i class="fas fa-check mr-1"></i> Saya Sudah Selesai Menyimak
+                        </button>
+                    </div>
+
+                    <div id="ap-text-content" class="hidden mt-4 p-4 bg-gray-50 rounded-xl text-gray-700 text-sm leading-relaxed border border-gray-200 max-h-60 overflow-y-auto"></div>
+                </div>
+            </div>
+
+            <!-- SECTION: GAME -->
+            <div id="sec-game" class="content-sec hidden-screen max-w-3xl mx-auto">
+                <div class="bg-gradient-to-br from-pink-400 to-purple-500 p-8 rounded-3xl shadow-lg text-white text-center">
+                    <h2 class="text-3xl font-bold mb-2 text-white"><i class="fas fa-gamepad mr-2"></i> FIKSI atau NONFIKSI?</h2>
+                    <p class="mb-6 opacity-90">Baca cuplikan cerita di bawah ini, lalu tebak kategorinya!</p>
+                    
+                    <div class="bg-white p-6 rounded-2xl text-gray-800 shadow-inner min-h-[150px] flex items-center justify-center mb-6">
+                        <p id="game-question-text" class="text-lg font-medium">Tekan tombol mulai untuk bermain!</p>
+                    </div>
+                    
+                    <div id="game-controls-start">
+                        <button onclick="startGame()" class="bg-yellow-400 text-brand-text px-8 py-3 rounded-full font-bold text-xl btn-bounce shadow-md">
+                            Mulai Bermain!
+                        </button>
+                    </div>
+
+                    <div id="game-controls-play" class="hidden grid grid-cols-2 gap-4">
+                        <button onclick="answerGame('Fiksi')" class="bg-purple-600 hover:bg-purple-700 text-white py-4 rounded-xl font-bold text-xl btn-bounce border-4 border-purple-800 shadow-md">
+                            FIKSI
+                        </button>
+                        <button onclick="answerGame('Nonfiksi')" class="bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold text-xl btn-bounce border-4 border-orange-700 shadow-md">
+                            NONFIKSI
+                        </button>
+                    </div>
+
+                    <div id="game-feedback" class="hidden mt-6 p-4 rounded-xl text-sm font-bold bg-white text-gray-800 shadow-md transition-all"></div>
+
+                    <div id="game-stats" class="hidden flex justify-between items-center mt-6 text-sm font-semibold opacity-90">
+                        <span>Soal: <span id="game-q-num">1</span>/10</span>
+                        <span>Skor: <span id="game-score">0</span></span>
+                    </div>
+                    
+                    <button id="btn-next-game" onclick="nextGameQuestion()" class="hidden mt-4 bg-white text-pink-500 px-6 py-2 rounded-full font-bold btn-bounce shadow mx-auto">
+                        Soal Berikutnya <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION: LATIHAN -->
+            <div id="sec-latihan" class="content-sec hidden-screen max-w-3xl mx-auto">
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border-t-8 border-orange-400">
+                    <h2 class="text-2xl font-bold mb-2">Latihan Soal</h2>
+                    <p class="text-gray-500 text-sm mb-6">Uji pemahamanmu sebelum evaluasi akhir. (10 Soal)</p>
+                    
+                    <div id="latihan-container"></div>
+                    <div class="mt-6 flex justify-between items-center">
+                        <div class="text-sm font-bold text-gray-500">Soal <span id="lat-curr">1</span> dari 10</div>
+                        <button onclick="submitLatihan()" id="btn-submit-latihan" class="bg-brand-green text-white px-6 py-2 rounded-full font-bold btn-bounce shadow hidden">Kirim Jawaban</button>
+                        <button onclick="nextLatihan()" id="btn-next-latihan" class="bg-brand-blue text-white px-6 py-2 rounded-full font-bold btn-bounce shadow">Selanjutnya</button>
+                    </div>
+                    <div id="latihan-result" class="hidden mt-6 p-6 rounded-2xl bg-gray-50 border text-center">
+                        <h3 class="text-xl font-bold mb-2">Hasil Latihan</h3>
+                        <p class="text-3xl font-bold text-brand-blue mb-2" id="lat-score-display">0</p>
+                        <button onclick="navStudent('evaluasi')" class="mt-4 bg-brand-yellow text-brand-text px-6 py-2 rounded-full font-bold btn-bounce shadow">Lanjut Evaluasi Akhir</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: EVALUASI -->
+            <div id="sec-evaluasi" class="content-sec hidden-screen max-w-3xl mx-auto">
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border-t-8 border-red-500">
+                    <h2 class="text-2xl font-bold mb-2 text-red-600">Evaluasi Akhir</h2>
+                    <p class="text-gray-500 text-sm mb-6">Kerjakan 20 soal berikut dengan teliti. Nilai akan disimpan dan dilihat oleh guru.</p>
+                    
+                    <div id="evaluasi-start-screen" class="text-center py-8">
+                        <i class="fas fa-clipboard-list text-6xl text-gray-300 mb-4"></i>
+                        <p class="mb-6 font-semibold">Siap untuk memulai evaluasi?</p>
+                        <button onclick="startEvaluasi()" class="bg-red-500 text-white px-8 py-3 rounded-full font-bold text-lg btn-bounce shadow-md">Mulai Evaluasi</button>
+                    </div>
+
+                    <div id="evaluasi-quiz-area" class="hidden">
+                        <div id="eval-container"></div>
+                        <div class="mt-6 flex justify-between items-center border-t pt-4">
+                            <div class="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">No. <span id="eval-curr">1</span>/20</div>
+                            <div class="space-x-2">
+                                <button onclick="prevEval()" id="btn-prev-eval" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full font-bold btn-bounce shadow hidden">Kembali</button>
+                                <button onclick="nextEval()" id="btn-next-eval" class="bg-brand-blue text-white px-6 py-2 rounded-full font-bold btn-bounce shadow">Selanjutnya</button>
+                                <button onclick="submitEvaluasi()" id="btn-submit-eval" class="bg-red-500 text-white px-6 py-2 rounded-full font-bold btn-bounce shadow hidden">Kumpulkan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: HASIL -->
+            <div id="sec-hasil" class="content-sec hidden-screen max-w-2xl mx-auto">
+                 <div class="bg-white p-8 rounded-3xl shadow-sm text-center border-t-8 border-brand-yellow">
+                    <i class="fas fa-medal text-6xl text-brand-yellow mb-4"></i>
+                    <h2 class="text-3xl font-bold mb-2">Hasil Belajarku</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-6 text-left">
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <p class="text-sm text-gray-500 font-bold">Skor Game</p>
+                            <p class="text-2xl font-bold text-pink-500" id="res-game">-</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <p class="text-sm text-gray-500 font-bold">Nilai Latihan</p>
+                            <p class="text-2xl font-bold text-orange-500" id="res-lat">-</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl col-span-2 border-2 border-brand-blue">
+                            <p class="text-sm text-brand-blue font-bold">NILAI EVALUASI AKHIR</p>
+                            <p class="text-5xl font-bold text-brand-blue my-2" id="res-eval">-</p>
+                            <p class="text-sm text-gray-600" id="res-eval-detail">Belum dikerjakan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-sm text-gray-500 flex items-center justify-center">
+                        <i id="sync-icon" class="fas fa-cloud-upload-alt mr-2"></i>
+                        <span id="sync-status">Status: Menghubungkan ke server...</span>
+                    </div>
+                 </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="screen-teacher" class="hidden-screen h-full flex flex-col bg-gray-100">
+        <header class="bg-gray-800 text-white p-4 flex justify-between items-center shadow-md z-10">
+            <div class="font-bold text-lg flex items-center">
+                <i class="fas fa-chalkboard-teacher mr-3 text-brand-yellow"></i>
+                Mode Guru - Dashboard Pemantauan
+            </div>
+            <button onclick="logoutTeacher()" class="bg-red-600 px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 transition">
+                Tutup Mode Guru
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Total Siswa Aktif</p>
+                    <p class="text-2xl font-bold" id="t-tot-siswa">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-green-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Selesai Evaluasi</p>
+                    <p class="text-2xl font-bold" id="t-selesai">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-yellow-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Rata-rata Kelas</p>
+                    <p class="text-2xl font-bold" id="t-rata">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-purple-500">
+                    <p class="text-xs text-gray-500 font-bold uppercase">Mode Data</p>
+                    <p class="text-lg font-bold text-purple-600" id="t-mode">Online (Firestore)</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border overflow-hidden flex flex-col">
+                <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Data Siswa</h3>
+                    <div class="space-x-2">
+                        <button onclick="exportCSV()" class="bg-green-600 text-white px-3 py-1 rounded text-sm font-bold shadow hover:bg-green-700"><i class="fas fa-file-excel mr-1"></i> Ekspor CSV</button>
+                        <button onclick="refreshData()" class="bg-brand-blue text-white px-3 py-1 rounded text-sm font-bold shadow hover:bg-blue-600"><i class="fas fa-sync-alt mr-1"></i> Segarkan</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                            <tr>
+                                <th class="p-3">Kls/Absen</th>
+                                <th class="p-3">Nama Siswa</th>
+                                <th class="p-3 text-center">Status Materi</th>
+                                <th class="p-3 text-center">Audio</th>
+                                <th class="p-3 text-center">Nilai Latihan</th>
+                                <th class="p-3 text-center">Nilai Evaluasi</th>
+                                <th class="p-3 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="bg-green-50 p-4 rounded-xl border border-green-200 text-sm text-gray-700">
+                <i class="fas fa-wifi text-green-600 mr-2"></i>
+                <strong>Mode Online Aktif:</strong> Semua progress dan hasil pekerjaan siswa tersimpan di server cloud (Firestore) secara real-time dan dapat diakses dari mana saja.
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Guru Login -->
+    <div id="modal-teacher-login" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-2xl max-w-sm w-full mx-4 shadow-xl">
+            <h3 class="text-xl font-bold mb-4">Akses Guru</h3>
+            <p class="text-sm text-gray-500 mb-4">Masukkan kata sandi guru untuk memantau nilai.</p>
+            <input type="password" id="input-teacher-pwd" class="w-full px-4 py-2 border rounded-lg mb-4" placeholder="Kata sandi...">
+            <div class="flex justify-end space-x-2">
+                <button onclick="document.getElementById('modal-teacher-login').classList.add('hidden')" class="px-4 py-2 text-gray-500 font-bold">Batal</button>
+                <button onclick="loginTeacher()" class="px-4 py-2 bg-gray-800 text-white rounded-lg font-bold">Masuk</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Siswa -->
+    <div id="modal-student-detail" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-2xl max-w-2xl w-full mx-4 shadow-xl max-h-[90vh] overflow-y-auto relative">
+            <button onclick="document.getElementById('modal-student-detail').classList.add('hidden')" class="absolute top-4 right-4 text-gray-500 hover:text-red-500"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-2xl font-bold mb-2 border-b pb-2" id="mod-s-nama">Nama Siswa</h3>
+            <div class="grid grid-cols-2 gap-4 text-sm mt-4">
+                <div><strong>Kelas / Absen:</strong> <span id="mod-s-kelas"></span></div>
+                <div><strong>Waktu Mulai:</strong> <span id="mod-s-waktu"></span></div>
+                <div><strong>Progress Materi:</strong> <span id="mod-s-materi"></span></div>
+                <div><strong>Progress Audio:</strong> <span id="mod-s-audio"></span></div>
+                <div><strong>Skor Game:</strong> <span id="mod-s-game"></span></div>
+                <div><strong>Nilai Latihan:</strong> <span id="mod-s-lat"></span></div>
+            </div>
+            <div class="mt-6 bg-gray-50 p-4 rounded-xl border text-center">
+                <p class="font-bold text-gray-500">NILAI EVALUASI AKHIR</p>
+                <p class="text-5xl font-bold text-brand-blue my-2" id="mod-s-eval">-</p>
+                <p class="text-sm" id="mod-s-eval-detail"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDocs, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- DATA MATERI ---
+        const audioTexts = [
+            {
+                id: 'fiksi1',
+                title: 'Petualangan Kancil di Hutan Pelangi',
+                type: 'Fiksi',
+                text: 'Di sebuah Hutan Pelangi yang pepohonannya berwarna-warni, hiduplah seekor kancil yang cerdik. Suatu hari, Kancil menemukan sebuah batu bercahaya yang bisa mengabulkan satu permintaan. Bukannya meminta makanan lezat, Kancil meminta agar aliran sungai yang kering bisa mengalir kembali supaya semua hewan tidak kehausan. Berkat kebaikannya, Kancil disayangi oleh seluruh penghuni hutan.'
+            },
+            {
+                id: 'fiksi2',
+                title: 'Pensil Ajaib Milik Rani',
+                type: 'Fiksi',
+                text: 'Rani adalah anak yang suka menggambar. Suatu malam, ia menemukan sebuah pensil usang di laci meja belajar kakeknya. Ketika ia mencoba menggambar seekor burung kecil, tiba-tiba burung itu keluar dari kertas dan terbang mengelilingi kamarnya! Ternyata itu adalah pensil ajaib. Rani sangat senang dan berjanji hanya akan menggambar hal-hal yang baik dengan pensil itu.'
+            },
+            {
+                id: 'nonfiksi1',
+                title: 'Pengalaman Siswa Menanam Pohon',
+                type: 'Nonfiksi',
+                text: 'Pada hari Jumat, tanggal 20 Oktober, SD Negeri 1 Harapan mengadakan kegiatan gotong royong memelihara lingkungan. Siswa kelas lima ditugaskan menanam bibit pohon mangga di halaman belakang sekolah. Pak Budi, guru IPA, memandu siswa menggali tanah dan memberi pupuk. Kegiatan ini bertujuan nyata untuk mengajarkan siswa pentingnya penghijauan dan menjaga udara tetap bersih.'
+            },
+            {
+                id: 'nonfiksi2',
+                title: 'Perjuangan Seorang Anak Meraih Prestasi',
+                type: 'Nonfiksi',
+                text: 'Budi adalah siswa yang tinggal jauh dari sekolah. Setiap hari ia harus berjalan kaki sejauh tiga kilometer. Namun, semangat belajarnya tidak pernah surut. Ia selalu meminjam buku di perpustakaan desa karena tidak mampu membeli buku baru. Berkat kerja keras dan ketekunannya belajar setiap malam, pada akhir semester Budi berhasil meraih juara pertama di kelasnya dan mendapat beasiswa.'
+            }
+        ];
+
+        const gameQuestions = [
+            { q: 'Cerita tentang hewan-hewan yang bersekolah dan bisa berbicara layaknya manusia.', a: 'Fiksi' },
+            { q: 'Catatan perjalanan seorang pendaki menaklukkan Gunung Rinjani.', a: 'Nonfiksi' },
+            { q: 'Kisah seorang putri duyung yang ingin hidup di daratan.', a: 'Fiksi' },
+            { q: 'Buku biografi yang menceritakan masa kecil B.J. Habibie.', a: 'Nonfiksi' },
+            { q: 'Dongeng tentang bawang merah dan bawang putih.', a: 'Fiksi' },
+            { q: 'Berita tentang terjadinya gempa bumi di suatu daerah.', a: 'Nonfiksi' },
+            { q: 'Cerita anak yang menemukan pintu rahasia ke dunia permen.', a: 'Fiksi' },
+            { q: 'Buku harian milik Anne Frank semasa perang.', a: 'Nonfiksi' },
+            { q: 'Legenda terjadinya Tangkuban Perahu.', a: 'Fiksi' },
+            { q: 'Laporan pengamatan pertumbuhan biji kacang hijau.', a: 'Nonfiksi' }
+        ];
+
+        const practiceQuestions = [
+            { q: "Teks yang berisi karangan atau imajinasi penulis disebut teks...", options: ["A. Berita", "B. Nonfiksi", "C. Fiksi", "D. Pengumuman"], answer: 2 },
+            { q: "Berikut ini yang merupakan contoh teks nonfiksi adalah...", options: ["A. Fabel", "B. Biografi pahlawan", "C. Dongeng", "D. Mitos"], answer: 1 },
+            { q: "Ciri utama teks fiksi adalah...", options: ["A. Berdasarkan fakta", "B. Mengandung data statistik", "C. Bersifat khayalan", "D. Berisi laporan perjalanan"], answer: 2 },
+            { q: "Tokoh dalam cerita 'Pensil Ajaib Milik Rani' bersifat...", options: ["A. Nyata", "B. Sejarah", "C. Rekaan/Imajinatif", "D. Fakta"], answer: 2 },
+            { q: "Apa tujuan utama penulisan teks fiksi?", options: ["A. Melaporkan berita", "B. Memberi hiburan", "C. Memberi instruksi", "D. Menyajikan data"], answer: 1 },
+            { q: "Catatan harian siswa tentang pengalaman liburan termasuk...", options: ["A. Fiksi", "B. Nonfiksi", "C. Pantun", "D. Puisi"], answer: 1 },
+            { q: "Urutan peristiwa dalam teks narasi disebut...", options: ["A. Tema", "B. Alur/Plot", "C. Latar", "D. Amanat"], answer: 1 },
+            { q: "Latar tempat pada cerita Kancil di Hutan Pelangi adalah...", options: ["A. Kebun binatang", "B. Hutan Pelangi", "C. Sungai Amazon", "D. Pegunungan"], answer: 1 },
+            { q: "Dongeng merupakan salah satu bentuk cerita fiksi karena...", options: ["A. Benar terjadi", "B. Tidak benar-benar terjadi", "C. Ada bukti foto", "D. Ditulis oleh wartawan"], answer: 1 },
+            { q: "Membaca teks biografi termasuk membaca teks...", options: ["A. Nonfiksi", "B. Fiksi", "C. Cerita rakyat", "D. Legenda"], answer: 0 }
+        ];
+
+        const evalQuestions = [];
+        for(let i=0; i<20; i++){
+            let type = i % 2 === 0 ? 'Fiksi' : 'Nonfiksi';
+            evalQuestions.push({
+                q: `Soal ${i+1}: Pernyataan manakah yang paling tepat menggambarkan teks ${type}?`,
+                options: [
+                    "A. Cerita yang bersumber dari data dan fakta.",
+                    "B. Cerita yang berasal dari imajinasi pengarang.",
+                    "C. Tulisan yang tidak memiliki tokoh utama.",
+                    "D. Karangan yang hanya berisi angka-angka."
+                ],
+                answer: type === 'Fiksi' ? 1 : 0
+            });
+        }
+        evalQuestions[0] = { q: "Apa yang dimaksud dengan teks narasi?", options: ["A. Teks yang berisi langkah-langkah", "B. Teks yang menceritakan urutan peristiwa", "C. Teks yang berisi argumen", "D. Teks yang menawarkan produk"], answer: 1 };
+        evalQuestions[1] = { q: "Kisah Sangkuriang termasuk ke dalam jenis teks...", options: ["A. Nonfiksi", "B. Fiksi", "C. Berita", "D. Laporan pengamatan"], answer: 1 };
+        evalQuestions[2] = { q: "Informasi yang terdapat dalam teks nonfiksi harus dapat dibuktikan...", options: ["A. Khayalannya", "B. Kebenarannya", "C. Kebohongannya", "D. Lucunya"], answer: 1 };
+
+        // --- GLOBAL STATE ---
+        window.appState = {
+            student: null,
+            progress: {
+                materiRead: false,
+                audioDone: [],
+                gameScore: 0,
+                latihanAnswers: [],
+                latihanScore: null,
+                evalAnswers: new Array(20).fill(null),
+                evalScore: null,
+                startTime: null
+            },
+            firebaseOk: false
+        };
+        
+        let db, auth;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'media-bhs-indo-v';
+
+        async function initFirebase() {
+            try {
+                if (typeof __firebase_config !== 'undefined') {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    window.appState.firebaseOk = true;
+                    updateOnlineStatusUI(true);
+                    console.log("Firebase initialized successfully in online mode.");
+                } else {
+                    throw new Error("Config Firebase tidak ditemukan.");
+                }
+            } catch (e) {
+                console.warn("Fallback ke Mode Lokal:", e.message);
+                window.appState.firebaseOk = false;
+                updateOnlineStatusUI(false);
+            }
+        }
+
+        function updateOnlineStatusUI(isOnline) {
+            const statusEl = document.getElementById('sync-status');
+            const iconEl = document.getElementById('sync-icon');
+            if (isOnline) {
+                if (statusEl) statusEl.innerText = "Status: Terhubung Online (Firestore)";
+                if (iconEl) iconEl.className = "fas fa-cloud text-green-500 mr-2";
+            } else {
+                if (statusEl) statusEl.innerText = "Status: Tersimpan Lokal (Offline)";
+                if (iconEl) iconEl.className = "fas fa-hdd text-gray-400 mr-2";
+            }
+        }
+
+        initFirebase();
+
+        // --- NAVIGATION LOGIC ---
+        window.showScreen = function(screenId) {
+            document.querySelectorAll('body > div').forEach(el => {
+                if(el.id.startsWith('screen-')) el.classList.add('hidden-screen');
+            });
+            const target = document.getElementById(screenId);
+            if(target) target.classList.remove('hidden-screen');
+        }
+
+        window.navStudent = function(secId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-gray-100', 'border-l-4', 'border-brand-blue');
+            });
+            const activeBtn = document.getElementById('nav-' + secId);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-gray-100', 'border-l-4', 'border-brand-blue');
+            }
+
+            document.querySelectorAll('.content-sec').forEach(sec => sec.classList.add('hidden-screen'));
+            document.getElementById('sec-' + secId).classList.remove('hidden-screen');
+
+            if(secId === 'materi') window.appState.progress.materiRead = true;
+            if(secId === 'hasil') updateHasilDisplay();
+            
+            saveLocalProgress();
+            saveToDatabase();
+            
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }
+
+        // --- LOGIN & SESSION ---
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nama = document.getElementById('input-nama').value.trim();
+            const kls = document.getElementById('input-kelas').value;
+            const absen = document.getElementById('input-absen').value;
+            
+            if(!nama) return;
+
+            const studentId = `S_${kls}_${absen}_${nama.replace(/[^a-zA-Z0-9]/g, '').substring(0,5)}`.toUpperCase();
+            
+            window.appState.student = { id: studentId, nama, kelas: kls, absen };
+            window.appState.progress.startTime = new Date().toISOString();
+            
+            const saved = localStorage.getItem('bi_progress_' + studentId);
+            if(saved) {
+                window.appState.progress = JSON.parse(saved);
+            }
+
+            document.querySelectorAll('.student-name-fill').forEach(el => el.innerText = nama);
+            document.getElementById('display-student-name').innerText = nama;
+            document.getElementById('display-student-class').innerText = kls;
+
+            showScreen('screen-student');
+            navStudent('home');
+            renderAudioList();
+            renderLatihan();
+            renderEvaluasi();
+            await saveToDatabase();
+        });
+
+        window.logout = function() {
+            if(confirm("Yakin ingin keluar? Progress tersimpan di sistem.")) {
+                window.appState.student = null;
+                showScreen('screen-welcome');
+                document.getElementById('form-login').reset();
+            }
+        }
+
+        // --- AUDIO LOGIC ---
+        let currentAudioId = null;
+        let synth = window.speechSynthesis;
+        let utterance = null;
+        
+        window.renderAudioList = function() {
+            const container = document.getElementById('audio-list-container');
+            container.innerHTML = '';
+            audioTexts.forEach(item => {
+                const isDone = window.appState.progress.audioDone.includes(item.id);
+                const btn = document.createElement('button');
+                btn.className = `p-4 rounded-xl text-left border-2 transition hover:shadow-md ${isDone ? 'border-green-400 bg-green-50' : 'border-gray-200 bg-white'}`;
+                btn.onclick = () => openAudio(item.id);
+                btn.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs font-bold px-2 py-1 rounded ${item.type==='Fiksi' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}">${item.type}</span>
+                            <h4 class="font-bold mt-2">${item.title}</h4>
+                        </div>
+                        ${isDone ? '<i class="fas fa-check-circle text-green-500 text-xl"></i>' : '<i class="fas fa-play-circle text-gray-300 text-xl"></i>'}
+                    </div>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        window.openAudio = function(id) {
+            currentAudioId = id;
+            const item = audioTexts.find(x => x.id === id);
+            document.getElementById('audio-player-area').classList.remove('hidden');
+            document.getElementById('ap-title').innerText = item.title;
+            document.getElementById('ap-badge').innerText = item.type;
+            document.getElementById('ap-badge').className = `px-3 py-1 rounded-full text-xs font-bold ${item.type==='Fiksi' ? 'bg-purple-100 text-purple-700' : 'bg-orange-100 text-orange-700'}`;
+            document.getElementById('ap-text-content').innerText = item.text;
+            document.getElementById('ap-text-content').classList.add('hidden');
+            
+            if(synth) synth.cancel();
+            
+            utterance = new SpeechSynthesisUtterance(item.text);
+            utterance.lang = 'id-ID';
+            utterance.rate = document.getElementById('ap-speed').value;
+            
+            utterance.onend = () => {
+                if(!window.appState.progress.audioDone.includes(currentAudioId)){
+                    window.appState.progress.audioDone.push(currentAudioId);
+                    saveLocalProgress();
+                    saveToDatabase();
+                    renderAudioList();
+                }
+            };
+        }
+
+        document.getElementById('ap-speed').addEventListener('input', (e) => {
+            const v = e.target.value;
+            document.getElementById('ap-speed-val').innerText = v + 'x';
+            if(utterance) utterance.rate = parseFloat(v);
+        });
+
+        window.audioCtrl = function(cmd) {
+            if(!utterance) return;
+            if(cmd === 'play') {
+                if(synth.paused) synth.resume();
+                else synth.speak(utterance);
+            } else if(cmd === 'pause') {
+                synth.pause();
+            } else if(cmd === 'stop') {
+                synth.cancel();
+            }
+        }
+        
+        window.markAudioDone = function() {
+            if(currentAudioId && !window.appState.progress.audioDone.includes(currentAudioId)){
+                window.appState.progress.audioDone.push(currentAudioId);
+                saveLocalProgress();
+                saveToDatabase();
+                renderAudioList();
+            }
+        }
+
+        // --- GAME LOGIC ---
+        let gameIndex = 0;
+        let gameScore = 0;
+        let gameQ = [...gameQuestions].sort(() => Math.random() - 0.5);
+        
+        window.startGame = function() {
+            gameIndex = 0;
+            gameScore = 0;
+            gameQ = [...gameQuestions].sort(() => Math.random() - 0.5);
+            document.getElementById('game-controls-start').classList.add('hidden');
+            document.getElementById('game-controls-play').classList.remove('hidden');
+            document.getElementById('game-stats').classList.remove('hidden');
+            document.getElementById('game-score').innerText = gameScore;
+            showGameQuestion();
+        }
+
+        function showGameQuestion() {
+            document.getElementById('game-q-num').innerText = gameIndex + 1;
+            document.getElementById('game-question-text').innerText = gameQ[gameIndex].q;
+            document.getElementById('game-feedback').classList.add('hidden');
+            document.getElementById('btn-next-game').classList.add('hidden');
+            document.getElementById('game-controls-play').classList.remove('hidden');
+        }
+
+        window.answerGame = function(ans) {
+            const correct = ans === gameQ[gameIndex].a;
+            const fb = document.getElementById('game-feedback');
+            document.getElementById('game-controls-play').classList.add('hidden');
+            
+            fb.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            if(correct) {
+                gameScore += 10;
+                fb.classList.add('bg-green-100', 'text-green-800');
+                fb.innerHTML = `<i class="fas fa-check-circle mr-2 text-xl"></i> BENAR! Ini adalah teks ${gameQ[gameIndex].a}. (+10 Poin)`;
+                document.getElementById('game-score').innerText = gameScore;
+            } else {
+                fb.classList.add('bg-red-100', 'text-red-800');
+                fb.innerHTML = `<i class="fas fa-times-circle mr-2 text-xl"></i> KURANG TEPAT. Jawaban yang benar adalah ${gameQ[gameIndex].a}.`;
+            }
+            
+            window.appState.progress.gameScore = Math.max(window.appState.progress.gameScore, gameScore);
+            saveLocalProgress();
+            saveToDatabase();
+
+            document.getElementById('btn-next-game').classList.remove('hidden');
+            
+            if(gameIndex >= 9) {
+                document.getElementById('btn-next-game').innerText = "Selesai!";
+                document.getElementById('btn-next-game').onclick = finishGame;
+            }
+        }
+
+        window.nextGameQuestion = function() {
+            gameIndex++;
+            showGameQuestion();
+        }
+
+        function finishGame() {
+            document.getElementById('game-question-text').innerHTML = `<strong>Permainan Selesai!</strong><br>Skor Akhirmu: ${gameScore}/100`;
+            document.getElementById('game-controls-start').classList.remove('hidden');
+            document.querySelector('#game-controls-start button').innerText = "Main Lagi";
+            document.getElementById('game-feedback').classList.add('hidden');
+            document.getElementById('btn-next-game').classList.add('hidden');
+            document.getElementById('game-stats').classList.add('hidden');
+        }
+
+        // --- LATIHAN LOGIC ---
+        let currLat = 0;
+        window.renderLatihan = function() {
+            const container = document.getElementById('latihan-container');
+            container.innerHTML = '';
+            window.appState.progress.latihanAnswers = window.appState.progress.latihanAnswers || new Array(10).fill(null);
+            
+            practiceQuestions.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.id = `lat-q-${idx}`;
+                div.className = idx === 0 ? '' : 'hidden';
+                let html = `<p class="text-lg font-semibold mb-4">${idx+1}. ${item.q}</p><div class="space-y-2">`;
+                item.options.forEach((opt, oIdx) => {
+                    const checked = window.appState.progress.latihanAnswers[idx] === oIdx ? 'checked' : '';
+                    html += `
+                    <label class="flex items-center p-3 border rounded-xl hover:bg-gray-50 cursor-pointer ${checked ? 'bg-blue-50 border-brand-blue' : ''}">
+                        <input type="radio" name="lat_${idx}" value="${oIdx}" ${checked} onchange="selectLat(${idx}, ${oIdx})" class="mr-3 accent-brand-blue w-5 h-5">
+                        <span>${opt}</span>
+                    </label>`;
+                });
+                html += `</div>`;
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+            updateLatUI();
+        }
+
+        window.selectLat = function(qIdx, oIdx) {
+            window.appState.progress.latihanAnswers[qIdx] = oIdx;
+            document.querySelectorAll(`input[name="lat_${qIdx}"]`).forEach(inp => {
+                inp.parentElement.classList.remove('bg-blue-50', 'border-brand-blue');
+                if(inp.checked) inp.parentElement.classList.add('bg-blue-50', 'border-brand-blue');
+            });
+            saveLocalProgress();
+            saveToDatabase();
+        }
+
+        window.nextLatihan = function() {
+            if(currLat < 9) {
+                document.getElementById(`lat-q-${currLat}`).classList.add('hidden');
+                currLat++;
+                document.getElementById(`lat-q-${currLat}`).classList.remove('hidden');
+                updateLatUI();
+            }
+        }
+        
+        function updateLatUI() {
+            document.getElementById('lat-curr').innerText = currLat + 1;
+            const btnNext = document.getElementById('btn-next-latihan');
+            const btnSubmit = document.getElementById('btn-submit-latihan');
+            
+            if(currLat === 9) {
+                btnNext.classList.add('hidden');
+                btnSubmit.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnSubmit.classList.add('hidden');
+            }
+        }
+
+        window.submitLatihan = function() {
+            const ans = window.appState.progress.latihanAnswers;
+            if(ans.includes(null)) {
+                return;
+            }
+            let score = 0;
+            ans.forEach((a, i) => { if(a === practiceQuestions[i].answer) score += 10; });
+            window.appState.progress.latihanScore = score;
+            saveLocalProgress();
+            saveToDatabase();
+            
+            document.getElementById('latihan-container').classList.add('hidden');
+            document.getElementById('btn-submit-latihan').classList.add('hidden');
+            document.getElementById('latihan-result').classList.remove('hidden');
+            document.getElementById('lat-score-display').innerText = score;
+        }
+
+        // --- EVALUASI LOGIC ---
+        let currEval = 0;
+        window.startEvaluasi = function() {
+            document.getElementById('evaluasi-start-screen').classList.add('hidden');
+            document.getElementById('evaluasi-quiz-area').classList.remove('hidden');
+            renderEvaluasi();
+        }
+
+        window.renderEvaluasi = function() {
+            const container = document.getElementById('eval-container');
+            container.innerHTML = '';
+            
+            if(window.appState.progress.evalScore !== null) {
+                container.innerHTML = `
+                    <div class="text-center p-8">
+                        <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-bold">Kamu sudah menyelesaikan evaluasi ini!</h3>
+                        <p class="text-gray-500 mt-2">Nilai akhirmu telah tersimpan secara online. Silakan cek menu Hasil Belajarku.</p>
+                    </div>`;
+                document.getElementById('evaluasi-quiz-area').querySelector('.flex').classList.add('hidden');
+                return;
+            }
+
+            evalQuestions.forEach((item, idx) => {
+                const div = document.createElement('div');
+                div.id = `eval-q-${idx}`;
+                div.className = idx === 0 ? '' : 'hidden';
+                let html = `<p class="text-lg font-semibold mb-4">${idx+1}. ${item.q}</p><div class="space-y-3">`;
+                item.options.forEach((opt, oIdx) => {
+                    const checked = window.appState.progress.evalAnswers[idx] === oIdx ? 'checked' : '';
+                    html += `
+                    <label class="flex items-center p-4 border-2 rounded-xl hover:bg-gray-50 cursor-pointer transition ${checked ? 'bg-red-50 border-red-400' : 'border-gray-200'}">
+                        <input type="radio" name="eval_${idx}" value="${oIdx}" ${checked} onchange="selectEval(${idx}, ${oIdx})" class="mr-3 accent-red-500 w-5 h-5">
+                        <span>${opt}</span>
+                    </label>`;
+                });
+                html += `</div>`;
+                div.innerHTML = html;
+                container.appendChild(div);
+            });
+            updateEvalUI();
+        }
+
+        window.selectEval = function(qIdx, oIdx) {
+            window.appState.progress.evalAnswers[qIdx] = oIdx;
+            document.querySelectorAll(`input[name="eval_${qIdx}"]`).forEach(inp => {
+                inp.parentElement.classList.remove('bg-red-50', 'border-red-400', 'border-gray-200');
+                if(inp.checked) inp.parentElement.classList.add('bg-red-50', 'border-red-400');
+                else inp.parentElement.classList.add('border-gray-200');
+            });
+            saveLocalProgress();
+            saveToDatabase();
+        }
+
+        window.nextEval = function() {
+            if(currEval < 19) {
+                document.getElementById(`eval-q-${currEval}`).classList.add('hidden');
+                currEval++;
+                document.getElementById(`eval-q-${currEval}`).classList.remove('hidden');
+                updateEvalUI();
+            }
+        }
+        window.prevEval = function() {
+            if(currEval > 0) {
+                document.getElementById(`eval-q-${currEval}`).classList.add('hidden');
+                currEval--;
+                document.getElementById(`eval-q-${currEval}`).classList.remove('hidden');
+                updateEvalUI();
+            }
+        }
+
+        function updateEvalUI() {
+            document.getElementById('eval-curr').innerText = currEval + 1;
+            const btnNext = document.getElementById('btn-next-eval');
+            const btnPrev = document.getElementById('btn-prev-eval');
+            const btnSubmit = document.getElementById('btn-submit-eval');
+            
+            btnPrev.classList.toggle('hidden', currEval === 0);
+            
+            if(currEval === 19) {
+                btnNext.classList.add('hidden');
+                btnSubmit.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                btnSubmit.classList.add('hidden');
+            }
+        }
+
+        window.submitEvaluasi = async function() {
+            const ans = window.appState.progress.evalAnswers;
+            const unans = ans.findIndex(a => a === null);
+            if(unans !== -1) {
+                return;
+            }
+
+            let score = 0;
+            let correctCount = 0;
+            ans.forEach((a, i) => { 
+                if(a === evalQuestions[i].answer) {
+                    score += 5;
+                    correctCount++;
+                }
+            });
+            window.appState.progress.evalScore = score;
+            saveLocalProgress();
+            await saveToDatabase();
+            
+            navStudent('hasil');
+            renderEvaluasi();
+        }
+
+        function updateHasilDisplay() {
+            const p = window.appState.progress;
+            document.getElementById('res-game').innerText = p.gameScore || 0;
+            document.getElementById('res-lat').innerText = p.latihanScore !== null ? p.latihanScore : 'Belum';
+            
+            const elEval = document.getElementById('res-eval');
+            const elEvalDet = document.getElementById('res-eval-detail');
+            
+            if(p.evalScore !== null) {
+                elEval.innerText = p.evalScore;
+                if(p.evalScore >= 75) {
+                    elEval.className = "text-5xl font-bold text-green-500 my-2";
+                    elEvalDet.innerText = "Luar biasa! Kamu telah mencapai KKM.";
+                } else {
+                    elEval.className = "text-5xl font-bold text-red-500 my-2";
+                    elEvalDet.innerText = "Terus semangat belajar, kamu pasti bisa lebih baik!";
+                }
+            } else {
+                elEval.innerText = '-';
+                elEval.className = "text-5xl font-bold text-brand-blue my-2";
+                elEvalDet.innerText = "Belum dikerjakan";
+            }
+        }
+
+        function saveLocalProgress() {
+            if(!window.appState.student) return;
+            localStorage.setItem('bi_progress_' + window.appState.student.id, JSON.stringify(window.appState.progress));
+            
+            let users = JSON.parse(localStorage.getItem('bi_users') || '{}');
+            users[window.appState.student.id] = {
+                profile: window.appState.student,
+                progress: window.appState.progress,
+                lastUpdate: new Date().toISOString()
+            };
+            localStorage.setItem('bi_users', JSON.stringify(users));
+        }
+
+        async function saveToDatabase() {
+            if(!window.appState.firebaseOk || !window.appState.student || !auth.currentUser) return;
+            try {
+                // RULE 1: Standardized Firestore Path
+                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'students', window.appState.student.id);
+                await setDoc(userRef, {
+                    profile: window.appState.student,
+                    progress: window.appState.progress,
+                    lastUpdate: new Date().toISOString()
+                }, { merge: true });
+                
+                updateOnlineStatusUI(true);
+            } catch(e) {
+                console.warn("Firestore error:", e.message);
+                updateOnlineStatusUI(false);
+            }
+        }
+
+        // --- TEACHER DASHBOARD ONLINE SYNC ---
+        window.promptTeacherLogin = function() {
+            document.getElementById('modal-teacher-login').classList.remove('hidden');
+            document.getElementById('input-teacher-pwd').value = '';
+        }
+
+        window.loginTeacher = function() {
+            const pwd = document.getElementById('input-teacher-pwd').value;
+            if(pwd === 'guru123') {
+                document.getElementById('modal-teacher-login').classList.add('hidden');
+                showScreen('screen-teacher');
+                refreshData();
+            }
+        }
+
+        window.logoutTeacher = function() {
+            showScreen('screen-welcome');
+        }
+
+        window.refreshData = async function() {
+            const tbody = document.getElementById('teacher-table-body');
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center p-4">Memuat data online...</td></tr>';
+            
+            let studentsData = [];
+
+            if(window.appState.firebaseOk && auth.currentUser) {
+                try {
+                    // RULE 1 & 2: Simple query without complex sorting in Firestore
+                    const studentsColl = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                    const snapshot = await getDocs(studentsColl);
+                    snapshot.forEach(doc => {
+                        studentsData.push(doc.data());
+                    });
+                    document.getElementById('t-mode').innerText = "Online (Firestore)";
+                } catch(e) {
+                    console.warn("Gagal mengambil data Firestore:", e.message);
+                    studentsData = loadLocalData();
+                }
+            } else {
+                studentsData = loadLocalData();
+            }
+
+            renderTeacherTable(studentsData);
+        }
+
+        function loadLocalData() {
+            document.getElementById('t-mode').innerText = "Offline / Lokal";
+            const users = JSON.parse(localStorage.getItem('bi_users') || '{}');
+            return Object.values(users);
+        }
+
+        function renderTeacherTable(data) {
+            const tbody = document.getElementById('teacher-table-body');
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center p-4 text-gray-500">Belum ada data siswa tersimpan.</td></tr>';
+                document.getElementById('t-tot-siswa').innerText = '0';
+                document.getElementById('t-selesai').innerText = '0';
+                document.getElementById('t-rata').innerText = '0';
+                return;
+            }
+
+            let totEval = 0;
+            let countEval = 0;
+
+            // Sorting dilakukan di memori JavaScript
+            data.sort((a,b) => {
+                if(a.profile.kelas !== b.profile.kelas) return a.profile.kelas.localeCompare(b.profile.kelas);
+                return parseInt(a.profile.absen) - parseInt(b.profile.absen);
+            });
+
+            data.forEach(s => {
+                const p = s.progress;
+                const prf = s.profile;
+                
+                let statusMateri = p.materiRead ? '<span class="text-green-600 font-bold">✓ Dibaca</span>' : '<span class="text-gray-400">Belum</span>';
+                let statusAudio = `${p.audioDone.length}/${audioTexts.length}`;
+                let nilaiLat = p.latihanScore !== null ? p.latihanScore : '-';
+                let nilaiEval = p.evalScore !== null ? p.evalScore : '-';
+                
+                if(p.evalScore !== null) {
+                    totEval += p.evalScore;
+                    countEval++;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-gray-50";
+                tr.innerHTML = `
+                    <td class="p-3">${prf.kelas} / ${prf.absen}</td>
+                    <td class="p-3 font-semibold">${prf.nama}</td>
+                    <td class="p-3 text-center">${statusMateri}</td>
+                    <td class="p-3 text-center">${statusAudio}</td>
+                    <td class="p-3 text-center">${nilaiLat}</td>
+                    <td class="p-3 text-center font-bold ${p.evalScore >= 75 ? 'text-green-600' : 'text-red-600'}">${nilaiEval}</td>
+                    <td class="p-3 text-center">
+                        <button onclick="showStudentDetail('${encodeURIComponent(JSON.stringify(s))}')" class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs hover:bg-blue-200">Detail</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('t-tot-siswa').innerText = data.length;
+            document.getElementById('t-selesai').innerText = countEval;
+            document.getElementById('t-rata').innerText = countEval > 0 ? (totEval/countEval).toFixed(1) : 0;
+        }
+
+        window.showStudentDetail = function(dataStr) {
+            const data = JSON.parse(decodeURIComponent(dataStr));
+            const p = data.progress;
+            const prf = data.profile;
+            
+            document.getElementById('mod-s-nama').innerText = prf.nama;
+            document.getElementById('mod-s-kelas').innerText = `${prf.kelas} - Absen ${prf.absen}`;
+            document.getElementById('mod-s-waktu').innerText = new Date(p.startTime).toLocaleString('id-ID');
+            document.getElementById('mod-s-materi').innerText = p.materiRead ? "Selesai dibaca" : "Belum selesai";
+            document.getElementById('mod-s-audio').innerText = `${p.audioDone.length} dari ${audioTexts.length} audio disimak`;
+            document.getElementById('mod-s-game').innerText = p.gameScore;
+            document.getElementById('mod-s-lat').innerText = p.latihanScore !== null ? p.latihanScore : 'Belum';
+            
+            const elEval = document.getElementById('mod-s-eval');
+            const elEvalDet = document.getElementById('mod-s-eval-detail');
+            
+            if(p.evalScore !== null) {
+                elEval.innerText = p.evalScore;
+                if(p.evalScore >= 75) {
+                    elEval.className = "text-5xl font-bold text-green-500 my-2";
+                    elEvalDet.innerText = "TUNTAS";
+                } else {
+                    elEval.className = "text-5xl font-bold text-red-500 my-2";
+                    elEvalDet.innerText = "BELUM TUNTAS (Butuh Pendampingan)";
+                }
+            } else {
+                elEval.innerText = '-';
+                elEval.className = "text-5xl font-bold text-gray-500 my-2";
+                elEvalDet.innerText = "Belum Mengerjakan";
+            }
+
+            document.getElementById('modal-student-detail').classList.remove('hidden');
+        }
+
+        window.exportCSV = function() {
+            let data = loadLocalData();
+            let csv = "Kelas,No. Absen,Nama,Status Materi,Audio Selesai,Skor Game,Nilai Latihan,Nilai Evaluasi\n";
+            data.forEach(s => {
+                csv += `${s.profile.kelas},${s.profile.absen},"${s.profile.nama}",${s.progress.materiRead ? 'Ya' : 'Tidak'},${s.progress.audioDone.length},${s.progress.gameScore},${s.progress.latihanScore||0},${s.progress.evalScore||0}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Rekap_Nilai_Bahasa_Indonesia.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
